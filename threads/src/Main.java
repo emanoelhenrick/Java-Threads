@@ -27,7 +27,7 @@ void main() throws Exception {
 
   var scanner = new Scanner(System.in);
   while (true) {
-    imprimirPainel(tracks);
+    printTracks(tracks);
     int input = scanner.nextInt();
     if (input == 0) break;
     if (input >= 1 && input <= 5) {
