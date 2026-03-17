@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public static void imprimirPainel(Track[] tracks) {
+public static void printTracks(Track[] tracks) {
   System.out.print("\033[H");
   System.out.println("🎵 MIXER DE FAIXAS");
   System.out.println("──────────────────");
