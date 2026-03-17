@@ -4,6 +4,8 @@ import java.net.URL;
 public class Track {
   private final Clip clip;
   private volatile boolean active = true;
+  private volatile boolean running = true;
+  private Thread thread;
   private final GlobalTime globalTime;
   private final Object clipLock = new Object();
   private final String name;
@@ -18,14 +20,14 @@ public class Track {
   }
 
   public void start() {
-    new Thread(() -> {
+    thread = new Thread(() -> {
       try {
         synchronized (clipLock) {
           clip.setMicrosecondPosition(0);
           clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
 
-        while (true) {
+        while (running) {
           synchronized (clipLock) {
             if (active) {
               if (!clip.isRunning()) {
@@ -44,20 +46,26 @@ public class Track {
           Thread.sleep(10);
         }
 
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
       } catch (Exception e) {
         e.printStackTrace();
+      } finally {
+        clip.stop();
+        clip.close();
+        System.out.println(name + " encerrado.");
       }
-    }).start();
+    });
+    thread.start();
   }
 
-  public synchronized void pause() {
-    active = false;
+  public void stop() {                      // ← novo
+    running = false;
+    thread.interrupt();
   }
 
-  public synchronized void resume() {
-    active = true;
-  }
-
+  public synchronized void pause() { active = false; }
+  public synchronized void resume() { active = true; }
   public synchronized boolean isActive() { return active; }
   public String getName() { return name; }
 }

@@ -29,7 +29,13 @@ void main() throws Exception {
   while (true) {
     printTracks(tracks);
     int input = scanner.nextInt();
-    if (input == 0) break;
+
+    if (input == 0) {
+      for (var track : tracks) track.stop();
+      Thread.sleep(500);
+      break;
+    }
+
     if (input >= 1 && input <= 5) {
       var track = tracks[input - 1];
       if (track.isActive()) track.pause();
